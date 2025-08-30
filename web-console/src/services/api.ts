@@ -27,6 +27,11 @@ api.interceptors.response.use(
 );
 
 export const kycApi = {
+  // 创建KYC会话
+  createKycSession: (userId: string): Promise<ApiResponse<{ kycId: string; userId: string; status: string }>> => {
+    return api.post('/kyc/session', { userId }).then(res => res.data);
+  },
+
   // 获取KYC列表
   getKycList: (params: KycListParams): Promise<ApiResponse<PageResult<KycProcess>>> => {
     return api.get('/admin/kyc', { params }).then(res => res.data);

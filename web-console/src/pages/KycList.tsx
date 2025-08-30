@@ -158,11 +158,11 @@ const KycList: React.FC = () => {
         status: statusFilter,
       });
 
-      if (response.success) {
-        setData(response.data.content);
+      if (response.success && response.data) {
+        setData(response.data.content || []);
         setPagination(prev => ({
           ...prev,
-          total: response.data.totalElements,
+          total: response.data.totalElements || 0,
         }));
       }
     } catch (error) {

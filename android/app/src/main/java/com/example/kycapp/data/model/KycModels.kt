@@ -7,6 +7,16 @@ data class ApiResponse<T>(
     val errorCode: String?
 )
 
+data class CreateKycSessionRequest(
+    val userId: String
+)
+
+data class CreateKycSessionResponse(
+    val kycId: String,
+    val userId: String,
+    val status: String
+)
+
 data class KycUploadResponse(
     val kycId: String,
     val uploadId: String

@@ -4,6 +4,8 @@ import lombok.RequiredArgsConstructor;
 import org.example.dto.ApiResponse;
 import org.example.dto.KycUploadResponse;
 import org.example.dto.KycStatusResponse;
+import org.example.dto.CreateKycSessionRequest;
+import org.example.dto.CreateKycSessionResponse;
 import org.example.service.KycService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -16,12 +18,24 @@ public class KycController {
 
     private final KycService kycService;
 
-    @PostMapping("/upload-id-card")
+    @PostMapping("/session")
+    public ResponseEntity<ApiResponse<CreateKycSessionResponse>> createKycSession(
+            @RequestBody CreateKycSessionRequest request) {
+        try {
+            CreateKycSessionResponse response = kycService.createKycSession(request);
+            return ResponseEntity.ok(ApiResponse.success(response));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest()
+                    .body(ApiResponse.error(e.getMessage(), "SESSION_CREATE_ERROR"));
+        }
+    }
+
+    @PostMapping("/{kycId}/upload-id-card")
     public ResponseEntity<ApiResponse<KycUploadResponse>> uploadIdCard(
-            @RequestParam("userId") String userId,
+            @PathVariable String kycId,
             @RequestParam("idCardImage") MultipartFile idCardImage) {
         try {
-            KycUploadResponse response = kycService.uploadIdCard(userId, idCardImage);
+            KycUploadResponse response = kycService.uploadIdCard(kycId, idCardImage);
             return ResponseEntity.ok(ApiResponse.success(response));
         } catch (Exception e) {
             return ResponseEntity.badRequest()

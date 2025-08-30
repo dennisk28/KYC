@@ -4,6 +4,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.example.dto.KycUploadResponse;
 import org.example.dto.KycStatusResponse;
+import org.example.dto.CreateKycSessionRequest;
+import org.example.dto.CreateKycSessionResponse;
 import org.example.model.KycProcess;
 import org.example.repository.KycProcessRepository;
 import org.springframework.stereotype.Service;
@@ -26,16 +28,33 @@ public class KycService {
     private final WorkflowService workflowService;
     private final String uploadDir = "uploads/";
 
-    public KycUploadResponse uploadIdCard(String userId, MultipartFile idCardImage) throws IOException {
-        String fileName = UUID.randomUUID() + "_" + idCardImage.getOriginalFilename();
-        String filePath = saveFile(idCardImage, fileName);
-
+    public CreateKycSessionResponse createKycSession(CreateKycSessionRequest request) {
         KycProcess process = new KycProcess();
-        process.setUserId(userId);
+        process.setUserId(request.getUserId());
         process.setStatus(KycProcess.KycStatus.PENDING);
         process.setCreatedTime(LocalDateTime.now());
         process.setUpdatedTime(LocalDateTime.now());
+        
+        process = kycProcessRepository.save(process);
+        
+        CreateKycSessionResponse response = new CreateKycSessionResponse();
+        response.setKycId(process.getId());
+        response.setUserId(process.getUserId());
+        response.setStatus(process.getStatus().toString());
+        
+        return response;
+    }
 
+    public KycUploadResponse uploadIdCard(String kycId, MultipartFile idCardImage) throws IOException {
+        Optional<KycProcess> processOpt = kycProcessRepository.findById(kycId);
+        if (!processOpt.isPresent()) {
+            throw new RuntimeException("KYC process not found: " + kycId);
+        }
+
+        String fileName = UUID.randomUUID() + "_" + idCardImage.getOriginalFilename();
+        String filePath = saveFile(idCardImage, fileName);
+
+        KycProcess process = processOpt.get();
         KycProcess.IdCardInfo idCardInfo = new KycProcess.IdCardInfo();
         idCardInfo.setFileName(idCardImage.getOriginalFilename());
         idCardInfo.setFilePath(filePath);
@@ -43,6 +62,7 @@ public class KycService {
         idCardInfo.setVerificationStatus(KycProcess.VerificationStatus.PENDING);
         
         process.setIdCardInfo(idCardInfo);
+        process.setUpdatedTime(LocalDateTime.now());
         process = kycProcessRepository.save(process);
 
         KycUploadResponse response = new KycUploadResponse();
@@ -53,8 +73,11 @@ public class KycService {
     }
 
     public KycUploadResponse uploadFace(String kycId, MultipartFile faceImage) throws IOException {
+        log.info("Looking for KYC process with ID: {}", kycId);
         Optional<KycProcess> processOpt = kycProcessRepository.findById(kycId);
+        log.info("KYC process found: {}", processOpt.isPresent());
         if (!processOpt.isPresent()) {
+            log.error("KYC process not found: {}", kycId);
             throw new RuntimeException("KYC process not found: " + kycId);
         }
 
