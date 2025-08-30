@@ -1,0 +1,52 @@
+spring:
+  application:
+    name: kyc-system
+  data:
+    mongodb:
+      host: localhost
+      port: 27017
+      database: kyc_db
+  servlet:
+    multipart:
+      max-file-size: 10MB
+      max-request-size: 10MB
+
+server:
+  port: 8080
+
+logging:
+  level:
+    org.example: DEBUG
+    org.springframework.data.mongodb: DEBUG
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics
+  endpoint:
+    health:
+      show-details: always
+
+# 第三方服务配置
+third-party:
+  services:
+    id-verification:
+      url: https://api.thirdparty.com/id-verification
+      timeout: 30000
+    face-verification:
+      url: https://api.thirdparty.com/face-verification  
+      timeout: 30000
+    deepfake-detection:
+      url: https://api.thirdparty.com/deepfake-detection
+      timeout: 30000
+  callback:
+    base-url: http://localhost:8080/api/callback
+
+# 文件上传配置
+file:
+  upload:
+    path: uploads/
+    allowed-types: jpg,jpeg,png,pdf

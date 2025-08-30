@@ -1,0 +1,47 @@
+.App {
+  text-align: left;
+}
+
+/* 自定义样式 */
+.ant-layout-sider {
+  box-shadow: 2px 0 8px rgba(0, 0, 0, 0.15);
+}
+
+.ant-card {
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12);
+}
+
+.ant-descriptions-item-label {
+  font-weight: 500;
+  color: #666;
+}
+
+.ant-tag {
+  border-radius: 4px;
+}
+
+/* 响应式布局 */
+@media (max-width: 768px) {
+  .ant-col {
+    margin-bottom: 16px;
+  }
+}
+
+/* 表格滚动条样式 */
+.ant-table-body::-webkit-scrollbar {
+  height: 6px;
+}
+
+.ant-table-body::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 3px;
+}
+
+.ant-table-body::-webkit-scrollbar-thumb {
+  background: #c1c1c1;
+  border-radius: 3px;
+}
+
+.ant-table-body::-webkit-scrollbar-thumb:hover {
+  background: #a8a8a8;
+}

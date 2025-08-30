@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="24dp"
+    android:gravity="center">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="KYC身份验证系统"
+        android:textSize="28sp"
+        android:textStyle="bold"
+        android:layout_marginBottom="48dp"
+        android:textColor="@color/design_default_color_primary" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="欢迎使用身份验证服务"
+        android:textSize="16sp"
+        android:layout_marginBottom="32dp"
+        android:textColor="@android:color/black"
+        android:gravity="center" />
+
+    <Button
+        android:id="@+id/btn_start_kyc"
+        android:layout_width="match_parent"
+        android:layout_height="56dp"
+        android:text="开始身份验证"
+        android:textSize="16sp"
+        android:layout_marginBottom="16dp"
+        style="@style/Widget.Material3.Button" />
+
+    <Button
+        android:id="@+id/btn_check_status"
+        android:layout_width="match_parent"
+        android:layout_height="56dp"
+        android:text="查看验证状态"
+        android:textSize="16sp"
+        style="@style/Widget.Material3.Button.OutlinedButton" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="• 请确保身份证照片清晰可见\n• 人脸照片需正面免冠\n• 验证过程可能需要几分钟"
+        android:textSize="12sp"
+        android:layout_marginTop="32dp"
+        android:textColor="@android:color/darker_gray"
+        android:gravity="start" />
+
+</LinearLayout>
