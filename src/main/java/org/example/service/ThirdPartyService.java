@@ -17,16 +17,16 @@ public class ThirdPartyService {
 
     private final WebClient webClient = WebClient.builder().build();
     
-    // 这些URL应该配置在application.yml中
-    private final String idVerificationUrl = "https://api.thirdparty.com/id-verification";
-    private final String faceVerificationUrl = "https://api.thirdparty.com/face-verification";
-    private final String deepfakeDetectionUrl = "https://api.thirdparty.com/deepfake-detection";
+    // Mock服务器URL配置
+    private final String idVerificationUrl = "http://localhost:9090/api/verification/id-card";
+    private final String faceVerificationUrl = "http://localhost:9090/api/verification/face";
+    private final String deepfakeDetectionUrl = "http://localhost:9090/api/verification/deepfake";
     private final String callbackUrl = "http://localhost:8080/api/callback";
 
     public void verifyIdCard(String filePath, String taskId) {
         Map<String, Object> request = new HashMap<>();
-        request.put("filePath", filePath);
         request.put("taskId", taskId);
+        request.put("imageUrl", "http://localhost:8080/api/admin/image/" + extractFileName(filePath));
         request.put("callbackUrl", callbackUrl + "/id-verification");
 
         webClient.post()
@@ -42,9 +42,8 @@ public class ThirdPartyService {
 
     public void verifyFace(String faceImagePath, String idCardPath, String taskId) {
         Map<String, Object> request = new HashMap<>();
-        request.put("faceImagePath", faceImagePath);
-        request.put("idCardPath", idCardPath);
         request.put("taskId", taskId);
+        request.put("imageUrl", "http://localhost:8080/api/admin/image/" + extractFileName(faceImagePath));
         request.put("callbackUrl", callbackUrl + "/face-verification");
 
         webClient.post()
@@ -60,8 +59,8 @@ public class ThirdPartyService {
 
     public void detectDeepfake(String faceImagePath, String taskId) {
         Map<String, Object> request = new HashMap<>();
-        request.put("faceImagePath", faceImagePath);
         request.put("taskId", taskId);
+        request.put("imageUrl", "http://localhost:8080/api/admin/image/" + extractFileName(faceImagePath));
         request.put("callbackUrl", callbackUrl + "/deepfake-detection");
 
         webClient.post()
@@ -73,5 +72,9 @@ public class ThirdPartyService {
                 .doOnSuccess(response -> log.info("Deepfake detection request sent successfully for taskId: {}", taskId))
                 .doOnError(error -> log.error("Error sending deepfake detection request for taskId: {}", taskId, error))
                 .subscribe();
+    }
+
+    private String extractFileName(String filePath) {
+        return filePath.substring(Math.max(filePath.lastIndexOf('\\'), filePath.lastIndexOf('/')) + 1);
     }
 }
