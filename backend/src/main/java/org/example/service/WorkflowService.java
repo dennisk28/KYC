@@ -171,7 +171,7 @@ public class WorkflowService {
                 .allMatch(node -> {
                     if (node.getResult() instanceof java.util.Map) {
                         java.util.Map<String, Object> result = (java.util.Map<String, Object>) node.getResult();
-                        return Boolean.TRUE.equals(result.get("isValid"));
+                        return Boolean.TRUE.equals(result.get("passed"));
                     }
                     return false;
                 });

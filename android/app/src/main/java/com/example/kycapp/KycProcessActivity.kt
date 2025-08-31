@@ -2,19 +2,16 @@ package com.example.kycapp
 
 import android.Manifest
 import android.content.Intent
-import android.content.pm.PackageManager
 import android.graphics.Bitmap
-import android.graphics.BitmapFactory
-import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
 import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.content.ContextCompat
 import androidx.lifecycle.lifecycleScope
 import com.example.kycapp.data.api.ApiClient
+import com.example.kycapp.data.model.CreateKycSessionRequest
 import com.example.kycapp.databinding.ActivityKycProcessBinding
 import com.karumi.dexter.Dexter
 import com.karumi.dexter.MultiplePermissionsReport
@@ -25,7 +22,6 @@ import kotlinx.coroutines.launch
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
 import okhttp3.RequestBody.Companion.asRequestBody
-import okhttp3.RequestBody.Companion.toRequestBody
 import java.io.File
 import java.io.FileOutputStream
 import java.util.*
@@ -142,20 +138,29 @@ class KycProcessActivity : AppCompatActivity() {
             try {
                 binding.progressBar.visibility = android.view.View.VISIBLE
                 binding.tvStatus.text = "正在上传身份证..."
-                
+
+                val request = CreateKycSessionRequest(userId)
+                var ssResponse = ApiClient.kycApiService.createKycSession(request)
+
+                if (ssResponse.isSuccessful && ssResponse.body()?.success == true) {
+                    currentKycId = ssResponse.body()?.data?.kycId
+                } else {
+                    binding.tvStatus.text = "创建KYC会话失败: ${ssResponse.body()?.message}"
+                    Toast.makeText(this@KycProcessActivity, "创建会话失败", Toast.LENGTH_SHORT).show()
+                    return@launch
+                }
+
                 val file = bitmapToFile(bitmap, "idcard_${System.currentTimeMillis()}.jpg")
                 val requestFile = file.asRequestBody("image/jpeg".toMediaTypeOrNull())
                 val body = MultipartBody.Part.createFormData("idCardImage", file.name, requestFile)
-                val userIdBody = userId.toRequestBody("text/plain".toMediaTypeOrNull())
+
+                val idResponse = ApiClient.kycApiService.uploadIdCard(currentKycId.toString(), body)
                 
-                val response = ApiClient.kycApiService.uploadIdCard(userIdBody, body)
-                
-                if (response.isSuccessful && response.body()?.success == true) {
-                    currentKycId = response.body()?.data?.kycId
+                if (idResponse.isSuccessful && idResponse.body()?.success == true) {
                     binding.tvStatus.text = "身份证上传成功，KYC ID: $currentKycId"
                     Toast.makeText(this@KycProcessActivity, "身份证上传成功", Toast.LENGTH_SHORT).show()
                 } else {
-                    binding.tvStatus.text = "身份证上传失败: ${response.body()?.message}"
+                    binding.tvStatus.text = "身份证上传失败: ${idResponse.body()?.message}"
                     Toast.makeText(this@KycProcessActivity, "上传失败", Toast.LENGTH_SHORT).show()
                 }
                 

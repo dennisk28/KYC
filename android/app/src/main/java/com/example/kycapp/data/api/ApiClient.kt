@@ -7,7 +7,8 @@ import retrofit2.converter.gson.GsonConverterFactory
 import java.util.concurrent.TimeUnit
 
 object ApiClient {
-    private const val BASE_URL = "http://10.0.2.2:8080/" // For Android emulator
+    //private const val BASE_URL = "http://10.0.2.2:8080/" // For Android emulator
+    private const val BASE_URL = "http://192.168.31.198:8080/" // For Android emulator
     // For real device use: "http://your-server-ip:8080/"
     
     private val loggingInterceptor = HttpLoggingInterceptor().apply {

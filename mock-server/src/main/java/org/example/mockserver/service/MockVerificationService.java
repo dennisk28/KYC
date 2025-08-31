@@ -25,7 +25,7 @@ public class MockVerificationService {
     public void processIdCardVerification(VerificationRequest request) {
         CompletableFuture.runAsync(() -> {
             try {
-                Thread.sleep(3000 + random.nextInt(5000));
+                Thread.sleep(23000 + random.nextInt(5000));
                 
                 CallbackResult result = new CallbackResult();
                 result.setTaskId(request.getTaskId());
@@ -50,14 +50,16 @@ public class MockVerificationService {
     public void processFaceVerification(VerificationRequest request) {
         CompletableFuture.runAsync(() -> {
             try {
-                Thread.sleep(2000 + random.nextInt(4000));
+                Thread.sleep(12000 + random.nextInt(4000));
                 
                 CallbackResult result = new CallbackResult();
                 result.setTaskId(request.getTaskId());
                 result.setStatus("COMPLETED");
                 
                 CallbackResult.Result verificationResult = new CallbackResult.Result();
-                verificationResult.setPassed(random.nextBoolean() ? true : random.nextDouble() > 0.15);
+//                verificationResult.setPassed(random.nextBoolean() ? true : random.nextDouble() > 0.15);
+                verificationResult.setPassed(true);
+                verificationResult.setReason(verificationResult.isPassed() ? "人脸验证通过" : "人脸与身份证不匹配");
                 verificationResult.setReason(verificationResult.isPassed() ? "人脸验证通过" : "人脸与身份证不匹配");
                 verificationResult.setConfidence(0.8 + random.nextDouble() * 0.2);
                 
@@ -82,7 +84,8 @@ public class MockVerificationService {
                 result.setStatus("COMPLETED");
                 
                 CallbackResult.Result verificationResult = new CallbackResult.Result();
-                verificationResult.setPassed(random.nextDouble() > 0.1);
+//                verificationResult.setPassed(random.nextDouble() > 0.1);
+                verificationResult.setPassed(true);
                 verificationResult.setReason(verificationResult.isPassed() ? "未检测到深度伪造" : "检测到可能的深度伪造");
                 verificationResult.setConfidence(0.85 + random.nextDouble() * 0.15);
                 

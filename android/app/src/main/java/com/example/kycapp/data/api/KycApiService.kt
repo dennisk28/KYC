@@ -1,19 +1,25 @@
 package com.example.kycapp.data.api
 
 import com.example.kycapp.data.model.ApiResponse
+import com.example.kycapp.data.model.CreateKycSessionRequest
+import com.example.kycapp.data.model.CreateKycSessionResponse
 import com.example.kycapp.data.model.KycStatusResponse
 import com.example.kycapp.data.model.KycUploadResponse
 import okhttp3.MultipartBody
-import okhttp3.RequestBody
 import retrofit2.Response
 import retrofit2.http.*
 
 interface KycApiService {
-    
+
+    @POST("api/kyc/session")
+    suspend fun createKycSession(
+        @Body body: CreateKycSessionRequest
+    ): Response<ApiResponse<CreateKycSessionResponse>>
+
     @Multipart
-    @POST("api/kyc/upload-id-card")
+    @POST("api/kyc/{kycId}/upload-id-card")
     suspend fun uploadIdCard(
-        @Part("userId") userId: RequestBody,
+        @Path("kycId") kycId: String,
         @Part idCardImage: MultipartBody.Part
     ): Response<ApiResponse<KycUploadResponse>>
     
