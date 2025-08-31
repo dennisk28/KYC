@@ -41,14 +41,21 @@ class KycProcessActivity : AppCompatActivity() {
     ) { result ->
         if (result.resultCode == RESULT_OK) {
             val imageBitmap = result.data?.extras?.get("data") as? Bitmap
-            imageBitmap?.let {
-                if (binding.btnUploadIdCard.text.contains("完成")) {
-                    binding.ivIdCard.setImageBitmap(it)
-                    uploadIdCard(it)
-                } else if (binding.btnUploadFace.text.contains("完成")) {
-                    binding.ivFacePhoto.setImageBitmap(it)
-                    uploadFacePhoto(it)
+            if (imageBitmap != null) {
+                // 根据当前操作类型显示图片
+                if (binding.btnUploadIdCard.isEnabled) {
+                    // 身份证上传
+                    binding.ivIdCard.setImageBitmap(imageBitmap)
+                    binding.ivIdCard.visibility = android.view.View.VISIBLE
+                    uploadIdCard(imageBitmap)
+                } else if (binding.btnUploadFace.isEnabled) {
+                    // 人脸照片上传
+                    binding.ivFacePhoto.setImageBitmap(imageBitmap)
+                    binding.ivFacePhoto.visibility = android.view.View.VISIBLE
+                    uploadFacePhoto(imageBitmap)
                 }
+            } else {
+                Toast.makeText(this, "拍照失败，请重试", Toast.LENGTH_SHORT).show()
             }
         }
     }
